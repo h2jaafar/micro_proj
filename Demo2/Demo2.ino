@@ -16,9 +16,6 @@ void setup()
   Application_FunctionSet.ApplicationFunctionSet_Init();
   float i;
   Serial.begin(9600);
-  float left;
-  float right;
-  float middle;
 }
   float left;
   float right;
@@ -26,6 +23,7 @@ void setup()
   bool left_tripped;
   bool right_tripped;
   bool middle_tripped;
+  float time_at_middle;
 void loop()
 {
   float i;
@@ -59,34 +57,73 @@ void loop()
   Serial.print('\t');
   Serial.print(right_tripped);
 
+  delay(1000);
+  if (i = 12.0)
+  {
+    maze();
+  }
+  
+}
 
+int maze()
+{
+  /* Left Straight Right Back Algorithm*/
   
-   
-  
+  Serial.print("-----Beggining Maze Solver-----");
+  bool Finished = false;
+  while(!Finished)
+  {
+    left_sensor_raw = //
+    left_sensor = // 
 
-    Serial.print('\n');
-  
-  if (i=12.0)
-  {
-//    Serial.print("T-ju/nction \n ");//
-    void;
+    right_sensor_raw = //
+    right_sensor = //
+
+    forward_sensor_raw = //
+    forward_sensor = //
+
+    // If there is an obstacle, x_sensor = true
+    
+    if (left_sensor && right_sensor && !forward_sensor)
+    {
+      //move forward
+    }
+
+    else if (!left_sensor && right_sensor && forward_sensor)
+    {
+      // left turn 
+    }
+
+    
+    else if (left_sensor && !right_sensor && forward_sensor)
+    {
+      // right turn
+    }
+
+    
+    else if (!left_sensor && !right_sensor && forward_sensor)
+    {
+      // when both left and right are possible, go left
+    }
+
+//    else if (!left_sensor && right_sensor && forward_sensor)
+//    {
+//      // all are possible, go straight
+//    }
+
+    
+    else if (!left_sensor && !right_sensor && !forward_sensor)
+    {
+      // U-turn
+    }
+
+    
+    else if (!left_sensor && !right_sensor && !forward_sensor)
+    {
+      // completed maze
+    }
+
+    
   }
-  else if (i=1)
-  {
-    Serial.print("Middle \n");
-  }
-  else if (i=2)
-  {
-    Serial.print("Left \n");
-  }
-  else if (i=3)
-  {
-    Serial.print("Right \n");
-  }
-  else if (i=0)
-  {
-  Serial.print("Other \n");
-  }
-  
   
 }
