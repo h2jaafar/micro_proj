@@ -15,9 +15,15 @@ class ApplicationFunctionSet
 {
 public:
   void ApplicationFunctionSet_Init(void);
-  void ApplicationFunctionSet_Tracking(void);           //循迹
+  float ApplicationFunctionSet_Tracking(void);           //循迹
   void ApplicationFunctionSet_SensorDataUpdate(void);   //传感器数据更新
   void ApplicationFunctionSet_SerialPortDataAnalysis(void);
+  float Sensor_Left(void);
+  float Sensor_Right(void);
+  float Sensor_Mid(void);
+  bool Sensor_Mid_Tripped(void);
+  bool Sensor_Right_Tripped(void);
+  bool Sensor_Left_Tripped(void);
   
 private:
   volatile float TrackingData_L;       //循迹数据
@@ -32,9 +38,9 @@ public:
   boolean Car_LeaveTheGround = true;
 
 public:
-  uint16_t TrackingDetection_S = 250;
-  uint16_t TrackingDetection_E = 850;
-  uint16_t TrackingDetection_V = 950;
+  uint16_t TrackingDetection_S = 250; //250
+  uint16_t TrackingDetection_E = 1300;
+  uint16_t TrackingDetection_V = 1500; //950
 };
 extern ApplicationFunctionSet Application_FunctionSet;
 #endif

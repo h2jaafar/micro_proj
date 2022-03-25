@@ -271,7 +271,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SensorDataUpdate(void)
 
 /*循迹*/
 
-void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
+
+
+float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 {
   static boolean timestamp = true;
   static boolean BlindDetection = true;
@@ -281,12 +283,11 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     if (Car_LeaveTheGround == false) //车子离开地面了？
     {
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
-      return;
+      return 0;
     }
     float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
     float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
     float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
-
 
     bool Left_Status;
     bool Right_Status;
@@ -303,18 +304,17 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       
 //      ApplicationFunctio/nSet_SmartRobotCarMotionControl(stop_it, 0);
       timestamp = false;
-      BlindDetection = false;
-      Serial.print("i=12");
-      Serial.print("\n");
-      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+      BlindDetection = true;
+      return 12;
+
     }
-    
     else if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：实现匀速直行*/
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
       timestamp = true;
       BlindDetection = true;
+      return 1;
     }
     else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
     {
@@ -322,6 +322,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       timestamp = true;
       BlindDetection = true;
+      return 3;
     }
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
     {
@@ -329,9 +330,12 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
       timestamp = true;
       BlindDetection = true;
+      return 2;
     }
+
     else //不在黑线上的时候。。。
     {
+      return 0;
       if (timestamp == true) //获取时间戳 timestamp
       {
         timestamp = false;
@@ -357,8 +361,43 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
   }
   else if (false == timestamp)
   {
+    return 0;
     BlindDetection = true;
     timestamp = true;
     MotorRL_time = 0;
   }
+  
+}
+
+float ApplicationFunctionSet::Sensor_Left(void)
+{
+  return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L());
+}
+
+float ApplicationFunctionSet::Sensor_Right(void)
+{
+  return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R());
+}
+
+float ApplicationFunctionSet::Sensor_Mid(void)
+{
+  return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M());
+}
+
+bool ApplicationFunctionSet::Sensor_Left_Tripped(void)
+{
+  float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
+  return function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E);
+}
+
+bool ApplicationFunctionSet::Sensor_Right_Tripped(void)
+{
+  float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
+  return function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E);
+}
+
+bool ApplicationFunctionSet::Sensor_Mid_Tripped(void)
+{
+  float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
+  return function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
 }
