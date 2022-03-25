@@ -86,18 +86,25 @@ int maze()
 
   DeviceDriverSet_ULTRASONIC myUltrasonic;
   myUltrasonic.DeviceDriverSet_ULTRASONIC_Init();
+  DeviceDriverSet_Servo myServo;
+ 
 
   
   while(!Finished)
   {
+    myServo.DeviceDriverSet_Servo_control(0);
     left_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //Function to get sensor data
     left_sensor = sensorCheck(left_sensor_raw); // 
-
-    right_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
-    right_sensor = sensorCheck(right_sensor_raw);//
-
+    delay(2000);
+    myServo.DeviceDriverSet_Servo_control(90);
     forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     forward_sensor = sensorCheck(forward_sensor_raw);//
+
+    delay(2000);
+
+    myServo.DeviceDriverSet_Servo_control(175);
+    right_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+    right_sensor = sensorCheck(right_sensor_raw);//
 
     // If there is an obstacle, x_sensor = true
     
@@ -105,12 +112,14 @@ int maze()
     {
       //move forward
       Serial.print("Forward");
+      Application_FunctionSet.LinearControl(0); // 0 is command for forward 
     }
 
     else if (!left_sensor && right_sensor && forward_sensor)
     {
       // left turn 
       Serial.print("Left Turn");
+      Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
     
@@ -118,6 +127,7 @@ int maze()
     {
       // right turn
       Serial.print("Right Turn");
+      Application_FunctionSet.LinearControl(1); // 1 is command for right
     }
 
     
@@ -125,6 +135,7 @@ int maze()
     {
       // when both left and right are possible, go left
       Serial.print("Both options: Left");
+      Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
 //    else if (!left_sensor && right_sensor && forward_sensor)
@@ -137,6 +148,7 @@ int maze()
     {
       // U-turn
       Serial.print("U-turn");
+      Application_FunctionSet.LinearControl(4); // 4 is command for backward 
     }
 
     

@@ -401,3 +401,13 @@ bool ApplicationFunctionSet::Sensor_Mid_Tripped(void)
   float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   return function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
 }
+
+void ApplicationFunctionSet::LinearControl(int i)
+{
+  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
+  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
+  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
+  else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
+  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
+  else{Serial.print("Error, integer not found in LinearControl func");};
+}

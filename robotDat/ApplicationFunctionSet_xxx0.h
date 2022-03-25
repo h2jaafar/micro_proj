@@ -24,6 +24,7 @@ public:
   bool Sensor_Mid_Tripped(void);
   bool Sensor_Right_Tripped(void);
   bool Sensor_Left_Tripped(void);
+  void LinearControl(int i);
   
 private:
   volatile float TrackingData_L;       //循迹数据
