@@ -95,6 +95,7 @@ int maze()
     myServo.DeviceDriverSet_Servo_control(180);
     left_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //Function to get sensor data
     left_sensor = sensorCheck(left_sensor_raw); // 
+    
     delay(2000);
     myServo.DeviceDriverSet_Servo_control(90);
     forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
@@ -159,7 +160,6 @@ int maze()
       Finished = true;
     }
 
-    
   }
   
 }

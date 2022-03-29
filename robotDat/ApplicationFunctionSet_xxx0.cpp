@@ -308,13 +308,13 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       return 12;
 
     }
-    else if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
+    if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：实现匀速直行*/
       ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
       timestamp = true;
       BlindDetection = true;
-      return 1;
+//      return 1;
     }
     else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
     {
@@ -322,7 +322,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       timestamp = true;
       BlindDetection = true;
-      return 3;
+//      return 3;
     }
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
     {
@@ -330,7 +330,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
       timestamp = true;
       BlindDetection = true;
-      return 2;
+//      return 2;
     }
 
     else //不在黑线上的时候。。。
@@ -361,7 +361,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
   }
   else if (false == timestamp)
   {
-    return 0;
+//    return 0;
     BlindDetection = true;
     timestamp = true;
     MotorRL_time = 0;
@@ -404,10 +404,17 @@ bool ApplicationFunctionSet::Sensor_Mid_Tripped(void)
 
 void ApplicationFunctionSet::LinearControl(int i)
 {
-  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
-  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
-  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
+  /* This function sends different drive commands when passed an int between 
+   *  0 and 4. We run each command twice, as to make the "drive" long enough
+   */
+  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+            ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
+  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);
+                 ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
+  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+                 ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
   else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
-  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
+  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);
+                ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
   else{Serial.print("Error, integer not found in LinearControl func");};
 }
