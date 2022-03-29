@@ -39,9 +39,9 @@ public:
   boolean Car_LeaveTheGround = true;
 
 public:
-  uint16_t TrackingDetection_S = 250; //250
-  uint16_t TrackingDetection_E = 1300;
-  uint16_t TrackingDetection_V = 1500; //950
+  uint16_t TrackingDetection_S = 250;
+  uint16_t TrackingDetection_E = 850;
+  uint16_t TrackingDetection_V = 950;
 };
 extern ApplicationFunctionSet Application_FunctionSet;
 #endif

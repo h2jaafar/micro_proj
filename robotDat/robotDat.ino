@@ -71,7 +71,7 @@ void loop()
 bool sensorCheck(float sen)
 {
 
-  if (sen<=20){return true;}
+  if (sen<=20){return true;} // check if 20cm close 
   else {return false;}
 }
 
@@ -92,7 +92,7 @@ int maze()
   
   while(!Finished)
   {
-    myServo.DeviceDriverSet_Servo_control(0);
+    myServo.DeviceDriverSet_Servo_control(180);
     left_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //Function to get sensor data
     left_sensor = sensorCheck(left_sensor_raw); // 
     delay(2000);
@@ -102,7 +102,7 @@ int maze()
 
     delay(2000);
 
-    myServo.DeviceDriverSet_Servo_control(175);
+    myServo.DeviceDriverSet_Servo_control(0);
     right_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     right_sensor = sensorCheck(right_sensor_raw);//
 
@@ -111,14 +111,14 @@ int maze()
     if (left_sensor && right_sensor && !forward_sensor)
     {
       //move forward
-      Serial.print("Forward");
+      Serial.print("Motion Chosen: Forward");
       Application_FunctionSet.LinearControl(0); // 0 is command for forward 
     }
 
     else if (!left_sensor && right_sensor && forward_sensor)
     {
       // left turn 
-      Serial.print("Left Turn");
+      Serial.print("Motion Chosen: Left Turn");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
@@ -126,7 +126,7 @@ int maze()
     else if (left_sensor && !right_sensor && forward_sensor)
     {
       // right turn
-      Serial.print("Right Turn");
+      Serial.print("Motion Chosen: Right Turn");
       Application_FunctionSet.LinearControl(1); // 1 is command for right
     }
 
@@ -134,7 +134,7 @@ int maze()
     else if (!left_sensor && !right_sensor && forward_sensor)
     {
       // when both left and right are possible, go left
-      Serial.print("Both options: Left");
+      Serial.print("Motion Chosen: Both options: Left");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
@@ -147,7 +147,7 @@ int maze()
     else if (!left_sensor && !right_sensor && !forward_sensor)
     {
       // U-turn
-      Serial.print("U-turn");
+      Serial.print("Motion Chosen: U-turn");
       Application_FunctionSet.LinearControl(4); // 4 is command for backward 
     }
 

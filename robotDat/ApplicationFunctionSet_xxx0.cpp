@@ -301,10 +301,10 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 
     if (Left_Status && Mid_Status && Right_Status)
     {
-      
-//      ApplicationFunctio/nSet_SmartRobotCarMotionControl(stop_it, 0);
+      Serial.print("\n 3 Sensors Detected \n");
+      //ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
       timestamp = false;
-      BlindDetection = true;
+      BlindDetection = false; // turn off the blind detection (the boogie)
       return 12;
 
     }
