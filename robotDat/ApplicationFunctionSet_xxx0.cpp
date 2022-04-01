@@ -67,6 +67,7 @@ struct Application_xxx
 Application_xxx Application_SmartRobotCarxxx0;
 
 bool ApplicationFunctionSet_SmartRobotCarLeaveTheGround(void);
+bool ApplicationFunctionSet_SmartRobotCarCrossFinishLine(void);
 void ApplicationFunctionSet_SmartRobotCarLinearMotionControl(SmartRobotCarMotionControl direction, uint8_t directionRecord, uint8_t speed, uint8_t Kp, uint8_t UpperLimit);
 void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionControl direction, uint8_t is_speed);
 
@@ -100,6 +101,21 @@ static bool ApplicationFunctionSet_SmartRobotCarLeaveTheGround(void)
   else
   {
     Application_FunctionSet.Car_LeaveTheGround = true;
+    return true;
+  }
+}
+static bool ApplicationFunctionSet_SmartRobotCarCrossFinishLine(void)
+{
+  if (Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R() <= Application_FunctionSet.TrackingDetection_E &&
+      Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M() <= Application_FunctionSet.TrackingDetection_E &&
+      Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L() <= Application_FunctionSet.TrackingDetection_E)
+  {
+    Application_FunctionSet.Car_CrossFinishLine = true;
+    return false;
+  }
+  else
+  {
+    Application_FunctionSet.Car_CrossFinishLine = false;
     return true;
   }
 }
@@ -301,20 +317,20 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 
     if (Left_Status && Mid_Status && Right_Status)
     {
-      Serial.print("\n 3 Sensors Detected \n");
-      //ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+      
+      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
       timestamp = false;
-      BlindDetection = false; // turn off the blind detection (the boogie)
+      BlindDetection = true;
       return 12;
 
     }
-    if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
+    else if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：实现匀速直行*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       timestamp = true;
       BlindDetection = true;
-//      return 1;
+      return 1;
     }
     else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
     {
@@ -322,7 +338,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
       timestamp = true;
       BlindDetection = true;
-//      return 3;
+      return 3;
     }
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
     {
@@ -330,7 +346,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
       ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
       timestamp = true;
       BlindDetection = true;
-//      return 2;
+      return 2;
     }
 
     else //不在黑线上的时候。。。
@@ -361,7 +377,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
   }
   else if (false == timestamp)
   {
-//    return 0;
+    return 0;
     BlindDetection = true;
     timestamp = true;
     MotorRL_time = 0;
@@ -390,6 +406,16 @@ bool ApplicationFunctionSet::Sensor_Left_Tripped(void)
   return function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E);
 }
 
+void ApplicationFunctionSet::LinearControl(int i)
+{
+  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
+  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
+  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
+  else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
+  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
+  else{Serial.print("Error, integer not found in LinearControl func");};
+}
+
 bool ApplicationFunctionSet::Sensor_Right_Tripped(void)
 {
   float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
@@ -400,21 +426,4 @@ bool ApplicationFunctionSet::Sensor_Mid_Tripped(void)
 {
   float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   return function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
-}
-
-void ApplicationFunctionSet::LinearControl(int i)
-{
-  /* This function sends different drive commands when passed an int between 
-   *  0 and 4. We run each command twice, as to make the "drive" long enough
-   */
-  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);
-            ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
-  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);
-                 ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
-  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
-                 ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
-  else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
-  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);
-                ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
-  else{Serial.print("Error, integer not found in LinearControl func");};
 }
