@@ -26,6 +26,7 @@ DeviceDriverSet_ITR20001 AppITR20001;
 DeviceDriverSet_Motor AppMotor;
 
 /*f(x) int */
+// This is a check for if the sensor is tripped, don't worry too much about it
 static boolean
 function_xxx(long x, long s, long e) //f(x)
 {
@@ -35,7 +36,8 @@ function_xxx(long x, long s, long e) //f(x)
     return false;
 }
 
-/*运动方向控制序列*/
+/*Motor control framework*/ 
+
 enum SmartRobotCarMotionControl
 {
   Forward,       //(1)
@@ -73,6 +75,8 @@ void ApplicationFunctionSet_SmartRobotCarMotionControl(SmartRobotCarMotionContro
 
 void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 {
+  /* Initialize the entire function, decalres driver packages, serial baurd rate, etc.*/ 
+  
   bool res_error = true;
   Serial.begin(9600);
   AppMotor.DeviceDriverSet_Motor_Init();
@@ -91,6 +95,8 @@ void ApplicationFunctionSet::ApplicationFunctionSet_Init(void)
 /*ITR20001 检测小车是否离开地面*/
 static bool ApplicationFunctionSet_SmartRobotCarLeaveTheGround(void)
 {
+  /* If you lift the car, it will stop moving */ 
+  
   if (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R() > Application_FunctionSet.TrackingDetection_V &&
       AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M() > Application_FunctionSet.TrackingDetection_V &&
       AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L() > Application_FunctionSet.TrackingDetection_V)
@@ -105,7 +111,8 @@ static bool ApplicationFunctionSet_SmartRobotCarLeaveTheGround(void)
   }
 }
 static bool ApplicationFunctionSet_SmartRobotCarCrossFinishLine(void)
-{
+{ /* Function that returns true or false if crosses finish line */ 
+  
   if (Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R() <= Application_FunctionSet.TrackingDetection_E &&
       Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M() <= Application_FunctionSet.TrackingDetection_E &&
       Application_FunctionSet.TrackingDetection_S <= AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L() && AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L() <= Application_FunctionSet.TrackingDetection_E)
@@ -291,6 +298,9 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SensorDataUpdate(void)
 
 float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 {
+  /* This is the main tracking function, where most changes are */ 
+  /* It runs for each loop, reads sensors, and determines which direction to move*/ 
+  
   static boolean timestamp = true;
   static boolean BlindDetection = true;
   static unsigned long MotorRL_time = 0;
@@ -309,16 +319,19 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     bool Right_Status;
     bool Mid_Status;
 
+    /* Determine if the sensors are tripped (i.e if they sense a black line */ 
+    
     Left_Status = function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E);
     Mid_Status = function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
     Right_Status = function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E);
 
 
-
+    /* If all three are tripped, i.e, horizontal line */ 
+    
     if (Left_Status && Mid_Status && Right_Status)
     {
       
-      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0); // Stop the car
       timestamp = false;
       BlindDetection = true;
       return 12;
@@ -385,29 +398,37 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
   
 }
 
+
+
 float ApplicationFunctionSet::Sensor_Left(void)
 {
+  /* Return raw sensor data */ 
   return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L());
 }
 
 float ApplicationFunctionSet::Sensor_Right(void)
 {
+  /* Return raw sensor data */ 
   return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R());
 }
 
 float ApplicationFunctionSet::Sensor_Mid(void)
 {
+  /* Return raw sensor data */ 
   return (AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M());
 }
 
 bool ApplicationFunctionSet::Sensor_Left_Tripped(void)
 {
+  /* Return status of the sensor, i.e if it is tripped */ 
   float getAnaloguexxx_L = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_L();
   return function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E);
 }
 
 void ApplicationFunctionSet::LinearControl(int i)
 {
+  /* This function allows us to access the motion control framework from the main robotDat file */ 
+  /* We pass it an integer that corresponds to the desired linear motion */ 
   if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 255);}
   else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,255);}
   else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 255);}
@@ -417,13 +438,14 @@ void ApplicationFunctionSet::LinearControl(int i)
 }
 
 bool ApplicationFunctionSet::Sensor_Right_Tripped(void)
-{
+{ /* Return status of the sensor, i.e if it is tripped */ 
   float getAnaloguexxx_R = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_R();
   return function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E);
 }
 
 bool ApplicationFunctionSet::Sensor_Mid_Tripped(void)
 {
+  /* Return status of the sensor, i.e if it is tripped */ 
   float getAnaloguexxx_M = AppITR20001.DeviceDriverSet_ITR20001_getAnaloguexxx_M();
   return function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
 }
