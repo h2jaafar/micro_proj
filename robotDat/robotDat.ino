@@ -1,3 +1,4 @@
+
 /* DAT VERSION
  * @Author: ELEGOO
  * @Date: 2019-10-22 11:59:09
@@ -15,7 +16,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
-  float i=12;
+  float i;
   Serial.begin(9600);
 }
   float left;
@@ -28,6 +29,7 @@ void setup()
   
 void loop()
 {
+  bool finished = false;
   float i;
   i = 0;
   //delay(10);
@@ -63,16 +65,15 @@ void loop()
   //delay(1000);
   if (i == 12.0)
   {
-    delay(3000);
+    delay(2500);
     maze();
   }
-  
 }
 
 bool sensorCheck(float sen)
 {
 
-  if (sen<=20){return true;}
+  if (sen<=30&&sen>0){return true;}
   else {return false;}
 }
 
@@ -81,7 +82,7 @@ int maze()
   /* Left Straight Right Back Algorithm*/
   Serial.print("\n");
   Serial.print("\n");
-  Serial.print("-----Beggining Maze Solver-----");
+  Serial.print("-----Beggining Maze Solver-----\n");
   bool Finished = false;
   float left_sensor_raw, left_sensor, right_sensor_raw, right_sensor, forward_sensor, forward_sensor_raw;
 
@@ -92,52 +93,149 @@ int maze()
   
   while(!Finished)
   {
-    myServo.DeviceDriverSet_Servo_control(0);
+    myServo.DeviceDriverSet_Servo_control(180);
     left_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //Function to get sensor data
     left_sensor = sensorCheck(left_sensor_raw); // 
-    delay(2000);
+    Serial.print("Left = ");
+    Serial.print(left_sensor);
+    Serial.print(" ");
+    //delay(250);
     
     myServo.DeviceDriverSet_Servo_control(90);
     forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     forward_sensor = sensorCheck(forward_sensor_raw);//
-    delay(2000);
+    Serial.print("Forward = ");
+    Serial.print(forward_sensor);
+    Serial.print(" ");
+    //delay(250);
 
-    myServo.DeviceDriverSet_Servo_control(175);
+    myServo.DeviceDriverSet_Servo_control(0);
     right_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     right_sensor = sensorCheck(right_sensor_raw);//
-
+    Serial.print("Right = ");
+    Serial.print(right_sensor);
+    Serial.print("\n");
+    myServo.DeviceDriverSet_Servo_control(90);
 
     // If there is an obstacle, x_sensor = true
     
-    if (left_sensor && right_sensor && !forward_sensor)
+    if (left_sensor && right_sensor && !forward_sensor) // forward open, go forward, 
     {
       //move forward
       Serial.print("Forward\n");
-      Application_FunctionSet.LinearControl(0); // 0 is command for forward
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      Serial.print(forward_sensor_raw);
+      Serial.print("\n");
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
+    }
+    else if (!left_sensor && right_sensor && !forward_sensor) // left and forward open, go forward
+    {
+      //move forward
+      Serial.print("Forward\n");
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      Serial.print(forward_sensor_raw);
+      Serial.print("\n");
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
+    }
+    else if (left_sensor && !right_sensor && !forward_sensor) // right and forward open, go forward
+    {
+      //move forward
+      Serial.print("Forward\n");
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();//
+      Serial.print(forward_sensor_raw);
+      Serial.print("\n");
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
 
-    else if (!left_sensor && right_sensor && forward_sensor)
+
+    else if (!left_sensor && right_sensor && forward_sensor) // left open, go left
     {
-      // left turn 
+      // left turn: turn left then go forward until it is within 7cm of the forward wall
       Serial.print("Left Turn\n");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
+      delay(250);
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
+      delay(250);
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
 
     
     else if (left_sensor && !right_sensor && forward_sensor)
     {
-      // right turn
+      // right turn: turn right then go forward until it is within 7cm of the forward wall
       Serial.print("Right Turn\n");
-       Application_FunctionSet.LinearControl(1); // 1 is command for right
+      Application_FunctionSet.LinearControl(1); // 1 is command for right
+      delay(250);
+      Application_FunctionSet.LinearControl(3);
+      delay(250);
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();// 9 is command for stop
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
 
     
-    else if (!left_sensor && !right_sensor && forward_sensor)
+    else if (!left_sensor && !right_sensor && forward_sensor) //left and right open, go left
     {
+      if(left_sensor_raw>right_sensor_raw){
+      // left turn: turn left then go forward until it is within 7cm of the forward wall
+      Serial.print("Both open; Left Turn\n");
+      Application_FunctionSet.LinearControl(2); // 2 is command for left
+      delay(250);
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
+      delay(250);
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
+      }
+      else if(right_sensor_raw>left_sensor_raw){
+      // right turn: turn right then go forward until it is within 7cm of the forward wall
+      Serial.print("Both open; Right Turn\n");
+      Application_FunctionSet.LinearControl(1); // 1 is command for right
+      delay(250);
+      Application_FunctionSet.LinearControl(3);
+      delay(250);
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();// 9 is command for stop
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop 
+      }
+    }
+    /*{
       // when both left and right are possible, go left
       Serial.print("Both options: Left\n");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
-    }
+      delay(250);
+      Application_FunctionSet.LinearControl(3); // 9 is command for stop
+          delay(250);
+            forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 9 is command for stop
+    }*/
 
 //    else if (!left_sensor && right_sensor && forward_sensor)
 //    {
@@ -145,11 +243,20 @@ int maze()
 //    }
 
     
-    else if (!left_sensor && !right_sensor && !forward_sensor)
+    else if (left_sensor && right_sensor && forward_sensor)
     {
-      // U-turn
+      // U-turn: rotate in place for 180 degrees. 
       Serial.print("U-turn\n");
-      Application_FunctionSet.LinearControl(4); // 4 is command for backward 
+      Application_FunctionSet.LinearControl(1); 
+      delay(425);
+      Application_FunctionSet.LinearControl(3); // 9 is command for stop
+      delay(250);
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();// 9 is command for stop
+      while(forward_sensor_raw !=14){
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+      Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      }
+      Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
 
     
@@ -158,9 +265,12 @@ int maze()
       // completed maze
       Serial.print("Finish\n");
       Finished = true;
+      Application_FunctionSet.LinearControl(0); // 0 is command for forward
+      delay(1000);
+      Application_FunctionSet.LinearControl(3); // 9 is command for stop
+      break;
     }
 
     
   }
-  
 }
