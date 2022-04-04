@@ -1,4 +1,4 @@
-/*
+/* DAT VERSION
  * @Author: ELEGOO
  * @Date: 2019-10-22 11:59:09
  * @LastEditTime: 2020-06-28 14:55:26
@@ -15,7 +15,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Application_FunctionSet.ApplicationFunctionSet_Init();
-  float i;
+  float i=12;
   Serial.begin(9600);
 }
   float left;
@@ -30,7 +30,7 @@ void loop()
 {
   float i;
   i = 0;
-  delay(10);
+  //delay(10);
   i = Application_FunctionSet.ApplicationFunctionSet_Tracking(); 
   Application_FunctionSet.ApplicationFunctionSet_SensorDataUpdate();
   Serial.print("i= ");
@@ -60,9 +60,10 @@ void loop()
   Serial.print(right_tripped);
 
   Serial.print("\n");
-  delay(1000);
+  //delay(1000);
   if (i == 12.0)
   {
+    delay(3000);
     maze();
   }
   
@@ -71,7 +72,7 @@ void loop()
 bool sensorCheck(float sen)
 {
 
-  if (sen<=20){return true;} // check if 20cm close 
+  if (sen<=20){return true;}
   else {return false;}
 }
 
@@ -87,39 +88,38 @@ int maze()
   DeviceDriverSet_ULTRASONIC myUltrasonic;
   myUltrasonic.DeviceDriverSet_ULTRASONIC_Init();
   DeviceDriverSet_Servo myServo;
- 
 
   
   while(!Finished)
   {
-    myServo.DeviceDriverSet_Servo_control(180);
+    myServo.DeviceDriverSet_Servo_control(0);
     left_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //Function to get sensor data
     left_sensor = sensorCheck(left_sensor_raw); // 
-    
     delay(2000);
+    
     myServo.DeviceDriverSet_Servo_control(90);
     forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     forward_sensor = sensorCheck(forward_sensor_raw);//
-
     delay(2000);
 
-    myServo.DeviceDriverSet_Servo_control(0);
+    myServo.DeviceDriverSet_Servo_control(175);
     right_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
     right_sensor = sensorCheck(right_sensor_raw);//
+
 
     // If there is an obstacle, x_sensor = true
     
     if (left_sensor && right_sensor && !forward_sensor)
     {
       //move forward
-      Serial.print("Motion Chosen: Forward");
-      Application_FunctionSet.LinearControl(0); // 0 is command for forward 
+      Serial.print("Forward\n");
+      Application_FunctionSet.LinearControl(0); // 0 is command for forward
     }
 
     else if (!left_sensor && right_sensor && forward_sensor)
     {
       // left turn 
-      Serial.print("Motion Chosen: Left Turn");
+      Serial.print("Left Turn\n");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
@@ -127,15 +127,15 @@ int maze()
     else if (left_sensor && !right_sensor && forward_sensor)
     {
       // right turn
-      Serial.print("Motion Chosen: Right Turn");
-      Application_FunctionSet.LinearControl(1); // 1 is command for right
+      Serial.print("Right Turn\n");
+       Application_FunctionSet.LinearControl(1); // 1 is command for right
     }
 
     
     else if (!left_sensor && !right_sensor && forward_sensor)
     {
       // when both left and right are possible, go left
-      Serial.print("Motion Chosen: Both options: Left");
+      Serial.print("Both options: Left\n");
       Application_FunctionSet.LinearControl(2); // 2 is command for left
     }
 
@@ -148,7 +148,7 @@ int maze()
     else if (!left_sensor && !right_sensor && !forward_sensor)
     {
       // U-turn
-      Serial.print("Motion Chosen: U-turn");
+      Serial.print("U-turn\n");
       Application_FunctionSet.LinearControl(4); // 4 is command for backward 
     }
 
@@ -156,10 +156,11 @@ int maze()
     else if (!left_sensor && !right_sensor && !forward_sensor)
     {
       // completed maze
-      Serial.print("Finish");
+      Serial.print("Finish\n");
       Finished = true;
     }
 
+    
   }
   
 }
