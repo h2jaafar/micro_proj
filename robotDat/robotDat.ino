@@ -198,6 +198,10 @@ int maze()
       Serial.print(forward_sensor_raw);
       Serial.print("\n");
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
@@ -210,6 +214,10 @@ int maze()
       Serial.print(forward_sensor_raw);
       Serial.print("\n");
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
@@ -227,6 +235,10 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
@@ -244,6 +256,10 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
@@ -262,6 +278,10 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
       }
@@ -277,6 +297,10 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop 
       }
@@ -314,6 +338,10 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
+      if ((millis() - startMillis) > refreshInterval)
+        {
+          break; // this checks if it has been going for too long
+        }
       }
       Application_FunctionSet.LinearControl(3); // 3 is command for stop
     }
@@ -323,6 +351,7 @@ int maze()
     {
       // completed maze
       Serial.print("Finish\n");
+      Application_FunctionSet.LinearControl(3); // 9 is command for stop
       Finished = true;
       Application_FunctionSet.LinearControl(0); // 0 is command for forward
       delay(1000);
