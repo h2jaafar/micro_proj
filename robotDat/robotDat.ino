@@ -126,6 +126,27 @@ int maze()
   DeviceDriverSet_Servo myServo;           // Init servo objectr called myServo
 
 
+
+  // Get up the ramp
+
+    myServo.DeviceDriverSet_Servo_control(90);
+    forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
+    forward_sensor = sensorCheck(forward_sensor_raw);//
+    Serial.print("Forward = ");
+    Serial.print(forward_sensor);
+    Serial.print(" ");
+    //delay(250);
+
+    while(forward_sensor_raw !=wall_dist)
+    { // keep moving forward until you are wall_distcm away from wall
+      forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data();
+      Serial.print(forward_sensor_raw);
+      Serial.print("\n");
+      Application_FunctionSet.LinearControl(0);
+     }
+
+     Application_FunctionSet.LinearControl(3); // 3 is command for stop
+
  
   
   
