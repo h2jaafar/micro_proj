@@ -112,13 +112,12 @@ int maze()
   
   float left_sensor_raw, left_sensor, right_sensor_raw, right_sensor, forward_sensor, forward_sensor_raw;
   int wall_dist;
-  unsigned long refreshInterval;
+  const unsigned long refreshInterval = 5000;
   unsigned long startMillis;
 
   wall_dist = 14; // This variable is used to determine how far away from a wall the robot should stop
                   // see below
 
-  refreshInterval = 3.0;
 
   DeviceDriverSet_ULTRASONIC myUltrasonic; // Initilize ultarsonic object called myUltrasonic
                                            // This allows us to interact with it from robotDat
@@ -169,8 +168,9 @@ int maze()
 
     /* LSRB algorithm */ 
 
-    startMillis = millis();
+    
 
+    startMillis = millis();
     
     if (left_sensor && right_sensor && !forward_sensor) // forward open, go forward, 
     {
@@ -182,8 +182,9 @@ int maze()
       Serial.print("\n");
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
 
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -198,8 +199,9 @@ int maze()
       Serial.print(forward_sensor_raw);
       Serial.print("\n");
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -214,8 +216,9 @@ int maze()
       Serial.print(forward_sensor_raw);
       Serial.print("\n");
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -235,8 +238,9 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -256,8 +260,9 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -278,8 +283,9 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -297,8 +303,9 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
@@ -338,8 +345,9 @@ int maze()
       while(forward_sensor_raw !=wall_dist){
       forward_sensor_raw = myUltrasonic.DeviceDriverSet_ULTRASONIC_Return_Sensor_Data(); //
       Application_FunctionSet.LinearControl(0);// 0 is command for forward
-      if ((millis() - startMillis) > refreshInterval)
+      if ((millis() - startMillis) >= refreshInterval)
         {
+          Serial.print("\n Timed out, refreshing frame \n");
           break; // this checks if it has been going for too long
         }
       }
