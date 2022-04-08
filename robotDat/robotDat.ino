@@ -110,7 +110,7 @@ int maze()
   Serial.print("-----Beggining Maze Solver-----\n");
   bool Finished = false;
   float left_sensor_raw, left_sensor, right_sensor_raw, right_sensor, forward_sensor, forward_sensor_raw;
-  int turn_time = 650;
+  int turn_time = 675;
   int u_turn_time = 1300;
 
   DeviceDriverSet_ULTRASONIC myUltrasonic;
