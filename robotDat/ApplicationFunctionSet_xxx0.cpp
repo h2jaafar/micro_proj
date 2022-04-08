@@ -325,7 +325,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
      else {
         Serial.print(linetrackval);
         Serial.print("\n");
-        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
         linetrackval++;
         Serial.print(linetrackval);
         Serial.print("\n");
@@ -335,7 +335,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     else if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：实现匀速直行*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
       timestamp = true;
       BlindDetection = true;
       return 1;
@@ -343,7 +343,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：前右*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 60);
       timestamp = true;
       BlindDetection = true;
       return 3;
@@ -351,7 +351,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：前左*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 60);
       timestamp = true;
       BlindDetection = true;
       return 2;
