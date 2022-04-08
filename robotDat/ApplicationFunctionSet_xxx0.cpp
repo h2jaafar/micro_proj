@@ -291,6 +291,7 @@ void ApplicationFunctionSet::ApplicationFunctionSet_SensorDataUpdate(void)
 
 float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
 {
+//  int linecounter=0;/
   static boolean timestamp = true;
   static boolean BlindDetection = true;
   static unsigned long MotorRL_time = 0;
@@ -313,21 +314,28 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     Mid_Status = function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E);
     Right_Status = function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E);
 
-
-
     if (Left_Status && Mid_Status && Right_Status)
     {
-      
+      if (linetrackval == 1){
       ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);
       timestamp = false;
       BlindDetection = true;
       return 12;
-
-    }
+      }
+     else {
+        Serial.print(linetrackval);
+        Serial.print("\n");
+        ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);
+        linetrackval++;
+        Serial.print(linetrackval);
+        Serial.print("\n");
+        
+        }
+      }
     else if (function_xxx(getAnaloguexxx_M, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：实现匀速直行*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 50);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);
       timestamp = true;
       BlindDetection = true;
       return 1;
@@ -335,7 +343,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     else if (function_xxx(getAnaloguexxx_R, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：前右*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 100);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Right, 50);
       timestamp = true;
       BlindDetection = true;
       return 3;
@@ -343,7 +351,7 @@ float ApplicationFunctionSet::ApplicationFunctionSet_Tracking(void)
     else if (function_xxx(getAnaloguexxx_L, TrackingDetection_S, TrackingDetection_E))
     {
       /*控制左右电机转动：前左*/
-      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);
+      ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);
       timestamp = true;
       BlindDetection = true;
       return 2;
@@ -409,10 +417,11 @@ bool ApplicationFunctionSet::Sensor_Left_Tripped(void)
 void ApplicationFunctionSet::LinearControl(int i)
 {
   if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
+  //else if (i==5){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);}
   else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
   else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
   else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
-  else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 100);}
+ // else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);}
   else{Serial.print("Error, integer not found in LinearControl func");};
 }
 
