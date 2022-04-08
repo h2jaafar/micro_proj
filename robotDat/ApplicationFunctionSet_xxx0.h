@@ -40,9 +40,10 @@ public:
   boolean Car_CrossFinishLine = false;
 
 public:
-  uint16_t TrackingDetection_S = 150; //250
+  uint16_t TrackingDetection_S = 90; //150 dat
   uint16_t TrackingDetection_E = 850;
   uint16_t TrackingDetection_V = 950; //950
+  uint16_t linetrackval = 0;
 };
 extern ApplicationFunctionSet Application_FunctionSet;
 #endif
