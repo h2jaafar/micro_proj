@@ -416,10 +416,10 @@ bool ApplicationFunctionSet::Sensor_Left_Tripped(void)
 
 void ApplicationFunctionSet::LinearControl(int i)
 {
-  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 100);}
+  if (i==0){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 51);}
   //else if (i==5){ApplicationFunctionSet_SmartRobotCarMotionControl(Forward, 75);}
-  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,100);}
-  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 100);}
+  else if (i==1){ApplicationFunctionSet_SmartRobotCarMotionControl(Right,51);}
+  else if (i==2){ApplicationFunctionSet_SmartRobotCarMotionControl(Left, 50);}
   else if (i==3){ApplicationFunctionSet_SmartRobotCarMotionControl(stop_it, 0);}
  // else if (i==4){ApplicationFunctionSet_SmartRobotCarMotionControl(Backward, 50);}
   else{Serial.print("Error, integer not found in LinearControl func");};
