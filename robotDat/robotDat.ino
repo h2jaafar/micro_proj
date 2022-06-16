@@ -1,12 +1,4 @@
 
-/* DAT VERSION
- * @Author: ELEGOO
- * @Date: 2019-10-22 11:59:09
- * @LastEditTime: 2020-06-28 14:55:26
- * @LastEditors: Me
- * @Description: SmartRobot robot tank
- * @FilePath: 
- */
 #include <avr/wdt.h>
 #include "DeviceDriverSet_xxx0.h"
 #include "DeviceDriverSet_xxx0_US.h"
@@ -29,6 +21,7 @@ void setup()
   
 void loop()
 {
+  maze();
   bool finished = false;
   float i;
   i = 0;
@@ -85,7 +78,7 @@ int forward_with_detection()
   DeviceDriverSet_ULTRASONIC myUltrasonic;
   myUltrasonic.DeviceDriverSet_ULTRASONIC_Init();
   DeviceDriverSet_Servo myServo;
-  int wall_dist = 6;
+  int wall_dist = 3;
   myServo.DeviceDriverSet_Servo_control(90);
   //move forward
   Serial.print("Forward\n");
@@ -110,8 +103,8 @@ int maze()
   Serial.print("-----Beggining Maze Solver-----\n");
   bool Finished = false;
   float left_sensor_raw, left_sensor, right_sensor_raw, right_sensor, forward_sensor, forward_sensor_raw;
-  int turn_time = 675;
-  int u_turn_time = 1300;
+  int turn_time = 1215;
+  int u_turn_time = 2450;
 
   DeviceDriverSet_ULTRASONIC myUltrasonic;
   myUltrasonic.DeviceDriverSet_ULTRASONIC_Init();
